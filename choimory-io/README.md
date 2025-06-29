@@ -1,10 +1,16 @@
-# 기능
+# intro
 
-- 회원
-- 메모
-- TODO
-- 위시리스트 가격알림 기능
+- 개인 공부용
+- 공부하고 싶거나 필요한 기능들 하나씩 추가
 
-# 아키텍처
+# architect
 
-# DB 동기화
+# front
+
+# member
+
+# devops
+
+# ref
+
+- https://x.com/pyrasis/status/1607169960585080832
