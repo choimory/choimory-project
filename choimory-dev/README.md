@@ -21,8 +21,8 @@
 - [choimory-dev-front](https://github.com/choimory/choimory-dev-front)
 - [choimory-dev-member-api](https://github.com/choimory/choimory-dev-member-api)
 - choimory-dev-member-queue
-- choimory-dev-board-api
-- choimory-dev-board-queue
+- choimory-dev-article-api
+- choimory-dev-article-queue
 - choimory-dev-memo-api
 - choimory-dev-memo-queue
 - choimory-dev-noti-api
