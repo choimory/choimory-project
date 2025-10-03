@@ -38,7 +38,6 @@
 - Ingress - nginx 혹은 ALB -> nginx
     - ALB: AWS ALB 리소스를 생성, 별도 비용 발생
     - nginx: 무료, 인증서 무료, 다양한 커스터마이징
-    - 
 - Istio - 오버 엔지니어링
 
 # 배포 파이프라인
