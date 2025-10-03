@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: choimory-front
+  namespace: choimory
+  labels:
+    app: choimory-front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: choimory-front
+  template:
+    metadata:
+      labels:
+        app: choimory-front
+    spec:
+      containers:
+      - name: choimory-front
+        image: choimory/front:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: choimory-api
+  namespace: choimory
+  labels:
+    app: choimory-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: choimory-api
+  template:
+    metadata:
+      labels:
+        app: choimory-api
+    spec:
+      containers:
+      - name: choimory-api
+        image: choimory/api:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        - name: DB_HOST
+          value: "postgres-service"
+        - name: REDIS_HOST
+          value: "redis-service"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
