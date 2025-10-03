@@ -13,6 +13,10 @@
 - 그 외
   - Docker hub
 
+# refs
+
+- https://x.com/pyrasis/status/1607169960585080832
+ 
 # AWS IAM
 
 - AWS IAM roles 생성
@@ -89,10 +93,6 @@
    1. Recognize Git changed
    2. kustomize build
    3. k3s apply
-
-# refs
-
-- https://x.com/pyrasis/status/1607169960585080832
 
 ---
 
