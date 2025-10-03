@@ -5,7 +5,7 @@
 ```
 k3s/
 ├── base/                   # 기본 YAML 템플릿 (모든 환경에서 공유하는 공통 설정)
-│   ├── namespace.yaml      # choimory-dev, monitoring, argocd 네임스페이스
+│   ├── namespace.yaml      # choimory-dev (프로젝트 기본), monitoring, argocd 네임스페이스
 │   ├── deployment.yaml     # Front, API 애플리케이션 배포
 │   ├── service.yaml        # 서비스 정의
 │   ├── ingress.yaml        # nginx Ingress (SSL/TLS 포함)
@@ -42,17 +42,19 @@ k3s/
 
 ## 환경별 설정
 
-### Dev 환경
+### Dev 환경 (dev-choimory-dev)
 - Front/API 각 1개 replica
 - 낮은 리소스 할당 (개발용)
 - 개발용 이미지 태그 (dev-latest)
 - Spring Profile: dev
+- namePrefix: dev- 적용
 
-### Prod 환경
+### Prod 환경 (prod-choimory-dev)
 - Front/API 각 2개 replica (고가용성)
 - 높은 리소스 할당 (운영용)
 - 버전 태그 (v1.0.0)
 - Spring Profile: prod
+- namePrefix: prod- 적용
 
 ## 배포 명령어
 
@@ -68,9 +70,15 @@ kubectl apply -k k3s/overlays/prod
 
 ### 상태 확인
 ```bash
-kubectl get pods -n choimory-dev
-kubectl get svc -n choimory-dev
-kubectl get ingress -n choimory-dev
+# Dev 환경
+kubectl get pods -n dev-choimory-dev
+kubectl get svc -n dev-choimory-dev
+kubectl get ingress -n dev-choimory-dev
+
+# Prod 환경
+kubectl get pods -n prod-choimory-dev
+kubectl get svc -n prod-choimory-dev
+kubectl get ingress -n prod-choimory-dev
 ```
 
 ## 보안 설정
