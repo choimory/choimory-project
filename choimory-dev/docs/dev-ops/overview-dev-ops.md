@@ -7,10 +7,11 @@
   - App Pods (Front, API)
   - ArgoCD Pods
   - Monitoring pods (Loki, Grafana, Prometheus)
-- docker
-    - Postgres
-    - Redis
-    - Jenkins
+  - DB pods (Postgres, Redis)
+- Docker
+  - Jenkins
+- 그 외
+  - Docker hub
 
 # AWS IAM
 
@@ -46,6 +47,13 @@
   - Jenkins: 무료, 플러그인, 커스터마이징, 서버 리소스 소모
   - Github actions: 일정의 무료 사용량 제공, 관리 편의, 보안 자동화
 
+# Container registry
+
+- Docker hub
+  - Docker hub: 무료, 단순, Github actions와 쉬운 연동, 무료 Private repo 한개로 제한, Pull 제한, AWS와 네트워크 비용 발생 가능성
+  - AWS ECR: AWS 네이티브, 무제한 Private repo, IAM 권한 연동, 유료, 복잡한 인증 
+  - Github Container Registry: Github actions와 완벽 연동, 무료, 소스코드와 같은곳에서 관리
+
 # k3s GitOps
 
 - ArgoCD
@@ -66,6 +74,21 @@
 - k3s pod에 포함하여 관리
 - Prometheus
   - k8s 네이티브, 경량
+
+# CI/CD flow
+
+1. Github
+   1. dev branch push
+2. Jenkins (CI)
+   1. Github webhook Jenkins trigger
+   2. Jenkins build start
+      1. Docker build
+      2. Docker hub push
+      3. k8s repository의 kustomization.yml 파일 이미지 tag update 후, commit & push
+3. ArgoCD (CD)
+   1. Recognize Git changed
+   2. kustomize build
+   3. k3s apply
 
 # refs
 
@@ -156,3 +179,70 @@ choimory-project/
 - **Prometheus**: 메트릭 수집 (k8s 네이티브)
 - **설치 방법**: k3s Pod로 설치 (Helm 권장)
 - **Docker 대신 k3s**: 클러스터 내부 메트릭 자동 수집
+
+## Docker vs k3s Pod 비교 (PostgreSQL, Redis, Jenkins)
+
+### PostgreSQL & Redis
+
+**Docker 외부 운영 장점:**
+- 데이터 안정성 (k3s 문제와 분리)
+- 백업/복구 용이
+- 성능 최적화 가능
+- 볼륨 관리 단순
+
+**k3s Pod 운영 장점:**
+- 통합 관리 (모든 리소스를 k3s에서)
+- 네트워크 단순화
+- 스케일링/모니터링 통합
+- GitOps로 설정 관리
+
+### Jenkins
+
+**Docker 외부 권장:**
+- CI/CD는 k3s와 독립적으로 운영
+- k3s 장애 시에도 빌드/배포 가능
+- 플러그인/설정 관리 용이
+- 보안 격리
+
+### 추천
+
+**소규모 프로젝트:**
+- PostgreSQL/Redis: k3s Pod (통합 관리 편의)
+- Jenkins: Docker 외부 (독립성)
+
+**운영 환경:**
+- PostgreSQL: 외부 RDS 또는 Docker (안정성)
+- Redis: k3s Pod (캐시라서 휘발성 OK)
+- Jenkins: Docker 외부 (필수)
+
+## k3s Pod DB 환경별 분리
+
+### 분리 방식
+```
+dev 환경: dev-postgres (독립 DB) - dev-choimory-dev 네임스페이스
+prod 환경: prod-postgres (독립 DB) - prod-choimory-dev 네임스페이스
+```
+
+**분리 구조:**
+1. **네임스페이스 분리**: `dev-choimory-dev` vs `prod-choimory-dev` (choimory-dev는 프로젝트명)
+2. **PVC 분리**: 각 환경마다 별도 저장소
+3. **Secret 분리**: 환경별 DB 패스워드
+4. **Service 분리**: 각 환경의 앱이 자기 DB만 접근
+
+### 장점
+- 개발/운영 데이터 완전 분리
+- 개발 환경에서 실험해도 운영 DB 안전
+- 환경별 독립적인 스키마 변경 가능
+
+### 단점
+- 리소스 2배 사용 (dev DB + prod DB)
+- 운영 데이터를 dev에서 테스트하기 어려움
+- 각 환경마다 백업/관리 필요
+
+### 대안
+**공유 DB 방식:**
+- 하나의 PostgreSQL에서 database 분리
+- `dev_choimory-dev`, `prod_choimory-dev` 스키마 분리
+- 리소스 절약하지만 격리 수준 낮음
+
+**결론:** t3a.medium 리소스로는 환경별 분리가 더 안전하고 권장
