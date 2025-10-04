@@ -84,7 +84,7 @@
 1. Github
    1. dev branch push
 2. Jenkins (CI)
-   1. Github webhook Jenkins trigger
+   1. Github webhook Jenkins trigger or jenkins scm pulling branch
    2. Jenkins build start
       1. Docker build
       2. Docker hub push
