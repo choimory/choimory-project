@@ -5,9 +5,9 @@
   - Ingress
   - Istio
   - App Pods (Front, API)
+  - DB pods (Postgres, Redis)
   - ArgoCD Pods
   - Monitoring pods (Loki, Grafana, Prometheus)
-  - DB pods (Postgres, Redis)
 - Docker
   - Jenkins
 - 그 외
